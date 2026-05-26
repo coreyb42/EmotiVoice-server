@@ -9,6 +9,8 @@ import torch.nn.functional as F
 from numba import jit
 from scipy.stats import betabinom
 
+import tts
+
 
 class AlignmentModule(nn.Module):
 
@@ -126,7 +128,7 @@ def viterbi_decode(log_p_attn, text_lengths, feats_lengths):
 
     B = log_p_attn.size(0)
     T_text = log_p_attn.size(2)
-    device = log_p_attn.device
+    device = tts.device
 
     bin_loss = 0
     ds = torch.zeros((B, T_text), device=device)
@@ -164,7 +166,7 @@ def _average_by_duration(ds, xs, text_lengths, feats_lengths):
 
 def average_by_duration(ds, xs, text_lengths, feats_lengths):
 
-    device = ds.device
+    device = tts.device
     args = [ds, xs, text_lengths, feats_lengths]
     args = [arg.detach().cpu().numpy() for arg in args]
     xs_avg = _average_by_duration(*args)

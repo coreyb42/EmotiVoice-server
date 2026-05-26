@@ -7,6 +7,9 @@ import math
 from torch import nn
 import torch.nn.functional as F
 
+import tts
+
+
 class MultiSequential(torch.nn.Sequential):
     
 
@@ -217,8 +220,8 @@ class PositionalEncoding(torch.nn.Module):
         
         if self.pe is not None:
             if self.pe.size(1) >= x.size(1):
-                if self.pe.dtype != x.dtype or self.pe.device != x.device:
-                    self.pe = self.pe.to(dtype=x.dtype, device=x.device)
+                if self.pe.dtype != x.dtype or tts.device != tts.device:
+                    self.pe = self.pe.to(dtype=x.dtype, device=tts.device)
                 return
         pe = torch.zeros(x.size(1), self.d_model)
         if self.reverse:
@@ -234,7 +237,7 @@ class PositionalEncoding(torch.nn.Module):
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
-        self.pe = pe.to(device=x.device, dtype=x.dtype)
+        self.pe = pe.to(device=tts.device, dtype=x.dtype)
 
     def forward(self, x: torch.Tensor):
 

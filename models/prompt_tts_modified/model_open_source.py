@@ -5,7 +5,7 @@ This code is modified from https://github.com/espnet/espnet.
 import torch
 import torch.nn as nn
 
-
+import tts
 from models.prompt_tts_modified.modules.encoder import Encoder
 from models.prompt_tts_modified.modules.variance import DurationPredictor, VariancePredictor
 from models.prompt_tts_modified.modules.alignment import AlignmentModule, GaussianUpsampling, viterbi_decode, average_by_duration
@@ -134,9 +134,9 @@ class PromptTTS(nn.Module):
         x = x + p_embs + e_embs
 
         if mel_targets is not None:
-            h_masks_upsampling = self.make_non_pad_mask(output_lengths).to(x.device) 
+            h_masks_upsampling = self.make_non_pad_mask(output_lengths).to(tts.device)
             x = self.length_regulator(x, ds, h_masks_upsampling, ~src_mask, alpha=alpha)
-            h_masks = self.make_non_pad_mask(output_lengths).unsqueeze(-2).to(x.device)
+            h_masks = self.make_non_pad_mask(output_lengths).unsqueeze(-2).to(tts.device)
 
         else:
             x = self.length_regulator(x, d_outs, None, ~src_mask)
@@ -196,7 +196,7 @@ class PromptTTS(nn.Module):
         if max_len is None:
             max_len = torch.max(lengths).int()
 
-        ids = torch.arange(0, max_len, device=lengths.device).unsqueeze(0).expand(
+        ids = torch.arange(0, max_len, device=tts.device).unsqueeze(0).expand(
             batch_size, -1)
         mask = ids >= lengths.unsqueeze(1).expand(-1, max_len)
 

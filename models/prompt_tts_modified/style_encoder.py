@@ -8,6 +8,9 @@ from torch.nn.utils import spectral_norm
 
 import math
 
+import tts
+
+
 class LearnedDownSample(nn.Module):
     def __init__(self, layer_type, dim_in):
         super().__init__()
@@ -156,7 +159,7 @@ class CosineSimilarityLoss(nn.Module):
     
     def forward(self, output1, output2):
         B = output1.size(0)
-        target = torch.ones(B, device=output1.device, requires_grad=False)
+        target = torch.ones(B, device=tts.device, requires_grad=False)
         loss = self.loss_fn(output1, output2, target)
         return loss
 
